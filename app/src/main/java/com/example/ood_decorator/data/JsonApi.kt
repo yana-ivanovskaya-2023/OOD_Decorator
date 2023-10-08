@@ -13,12 +13,18 @@ class JsonApi(
         resultClass: Class<T>,
         path: String
     ): ApiResult<T> {
-        val body = rawApi.get(path)?.body?.string().orEmpty()
+        val response = rawApi.get(path)
+        val body = response?.body?.string().orEmpty()
 
-        return try {
-            ApiResult.Success(jsonParser.fromJson(body, resultClass))
-        } catch (ex: JsonSyntaxException) {
-            return ApiResult.Error.Unknown
+        return when {
+            response?.code?.rem(100) == 5 ->
+                ApiResult.Error.ServerNotResponding
+
+            else -> try {
+                ApiResult.Success(jsonParser.fromJson(body, resultClass))
+            } catch (ex: JsonSyntaxException) {
+                return ApiResult.Error.Unknown
+            }
         }
     }
 

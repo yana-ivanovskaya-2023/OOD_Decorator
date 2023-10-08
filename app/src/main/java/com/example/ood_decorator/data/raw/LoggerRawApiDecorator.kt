@@ -1,7 +1,5 @@
 package com.example.ood_decorator.data.raw
 
-import android.content.Context
-import android.net.ConnectivityManager
 import okhttp3.Response
 
 
